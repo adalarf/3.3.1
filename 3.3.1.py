@@ -65,14 +65,14 @@ with open('vacancies_dif_currencies.csv', mode='r', encoding='utf-8-sig') as fil
         return months - 1
 
     date = f'{mindate[8:10]}/{mindate[5:7]}/{mindate[0:4]}'
-    kzt_dict = []
-    uah_dict = []
-    eur_dict = []
-    byr_dict = []
-    usd_dict = []
-    date_dict = []
+    kzt_list = []
+    uah_list = []
+    eur_list = []
+    byr_list = []
+    usd_list = []
+    date_list = []
     for i in range(month_count(first_date, sedond_date)):
-        date_dict.append(date)
+        date_list.append(date)
         tree = ET.parse(urlopen(f'http://www.cbr.ru/scripts/XML_daily.asp?date_req={date}'))
         date = str(datetime.datetime.strptime(date.replace('/','-'), '%d-%m-%Y') + datetime.timedelta(days=30))
         date = f'{date[8:10]}/{date[5:7]}/{date[0:4]}'
@@ -83,18 +83,18 @@ with open('vacancies_dif_currencies.csv', mode='r', encoding='utf-8-sig') as fil
             value = float((child.find("Value").text).replace(',', '.')) / int(child.find("Nominal").text)
             if get_frequent_valutes(charcode) or charcode == 'BYN':
                 if charcode == 'KZT':
-                    kzt_dict.append(value)
+                    kzt_list.append(value)
                 if charcode == 'UAH':
-                    uah_dict.append(value)
+                    uah_list.append(value)
                 if charcode == 'EUR':
-                    eur_dict.append(value)
+                    eur_list.append(value)
                 if charcode == 'BYR' or charcode == 'BYN':
-                    byr_dict.append(value)
+                    byr_list.append(value)
                 if charcode == 'USD':
-                    usd_dict.append(value)
+                    usd_list.append(value)
 
-dict_csv = {'date': date_dict, 'KZT': kzt_dict, 'UAH': uah_dict,
-            'EUR': eur_dict, 'BYR': byr_dict, 'USD': usd_dict}
+dict_csv = {'date': date_list, 'KZT': kzt_list, 'UAH': uah_list,
+            'EUR': eur_list, 'BYR': byr_list, 'USD': usd_list}
 
 dict_df = pd.DataFrame(dict_csv)
 dict_df.to_csv('data.csv', index=False)
